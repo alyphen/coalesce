@@ -21,7 +21,7 @@ public class Track {
 
     public void createLights(RayHandler rayHandler) {
         for (Vector2 point : getPoints()) {
-            new PointLight(rayHandler, 32, getColour(), 64, point.x, point.y);
+            new PointLight(rayHandler, 128, getColour(), 64, point.x, point.y);
         }
     }
 
