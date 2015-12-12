@@ -150,4 +150,11 @@ public class Player implements GameObject {
     public Body getBody() {
         return body;
     }
+
+    public void jump() {
+        if (Math.abs(y - getTrack().getPointAt(trackPos).y) < 4) {
+            setDetached(true);
+            getBody().applyLinearImpulse(0, getGravityScale() * -1000000, getX(), getY(), true);
+        }
+    }
 }
