@@ -9,16 +9,23 @@ import com.badlogic.gdx.utils.Array;
 
 public class Level {
 
-    private World world;
+    private transient World world;
     private Array<Track> tracks;
     private Array<GameObject> objects;
-    private RayHandler rayHandler;
+    private transient RayHandler rayHandler;
 
     public Level() {
         world = new World(new Vector2(0F, 9.81F), true);
         tracks = new Array<Track>();
         objects = new Array<GameObject>();
         rayHandler = new RayHandler(world);
+    }
+
+    public void init() {
+        for (GameObject object : getObjects()) {
+            object.setLevel(this);
+        }
+        createLights();
     }
 
     public void createLights() {
@@ -45,6 +52,10 @@ public class Level {
         return tracks;
     }
 
+    public Track getTrack(int index) {
+        return getTracks().get(index);
+    }
+
     public void addTrack(Track track) {
         getTracks().add(track);
     }
@@ -60,4 +71,5 @@ public class Level {
     public RayHandler getRayHandler() {
         return rayHandler;
     }
+
 }

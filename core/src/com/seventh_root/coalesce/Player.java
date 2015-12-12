@@ -9,7 +9,8 @@ import static com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line;
 
 public class Player implements GameObject {
 
-    private Track track;
+    private transient Level level;
+    private int track;
     private float trackPos;
     private float x;
     private float y;
@@ -17,17 +18,25 @@ public class Player implements GameObject {
     private Color colour;
     private Color lineColour;
 
-    public Player(Track track, Color colour) {
+    public Player(int track, Color colour) {
         this.track = track;
-        this.x = track.getPoint(0).x;
-        this.y = track.getPoint(0).y;
+        this.x = level.getTrack(track).getPoint(0).x;
+        this.y = level.getTrack(track).getPoint(0).y;
         this.radius = 4;
         this.colour = colour;
         this.lineColour = new Color(0.8F, 0.8F, 0.8F, 1F);
     }
 
+    public Player() {
+
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
     public Track getTrack() {
-        return track;
+        return level.getTrack(track);
     }
 
     public float getX() {

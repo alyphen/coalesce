@@ -8,4 +8,6 @@ public interface GameObject {
 
     void render(ShapeRenderer shapeRenderer);
 
+    void setLevel(Level level);
+
 }
