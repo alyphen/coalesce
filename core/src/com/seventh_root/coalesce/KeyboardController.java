@@ -12,7 +12,7 @@ public class KeyboardController extends Controller {
     public void tick() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             getPlayer().setDetached(true);
-            getPlayer().getBody().applyLinearImpulse(0, getPlayer().getGravityScale() * -100, getPlayer().getX(), getPlayer().getY(), true);
+            getPlayer().getBody().applyLinearImpulse(0, getPlayer().getGravityScale() * -1000000, getPlayer().getX(), getPlayer().getY(), true);
         }
     }
 

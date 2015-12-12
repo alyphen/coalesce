@@ -26,10 +26,12 @@ public class Track {
     }
 
     public void render(ShapeRenderer shapeRenderer) {
+        shapeRenderer.begin();
         shapeRenderer.setColor(colour);
         for (int i = 0; i < points.size - 1; i++) {
             shapeRenderer.line(points.get(i).x, points.get(i).y, points.get(i + 1).x, points.get(i + 1).y);
         }
+        shapeRenderer.end();
     }
 
     public Color getColour() {

@@ -1,6 +1,7 @@
 package com.seventh_root.coalesce;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import static com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled;
 import static com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line;
 import static com.badlogic.gdx.physics.box2d.BodyDef.BodyType.DynamicBody;
+import static com.seventh_root.coalesce.Level.BOX2D_SCALE;
 
 public class Player implements GameObject {
 
@@ -65,6 +67,10 @@ public class Player implements GameObject {
         return radius;
     }
 
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
     public Color getColour() {
         return colour;
     }
@@ -93,40 +99,52 @@ public class Player implements GameObject {
         }
     }
 
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
     @Override
     public void tick(float delta) {
         if (!isDetached()) {
             trackPos += delta * speed;
             Vector2 pos = getTrack().getPointAt(trackPos);
             body.setGravityScale(0F);
-            body.setTransform(pos.x, pos.y, 0);
+            body.setTransform(pos.x / BOX2D_SCALE, pos.y / BOX2D_SCALE, 0);
         } else {
             body.setGravityScale(getGravityScale());
             if (Math.abs(y - getTrack().getPointAt(trackPos).y) < 4 && Math.signum(body.getLinearVelocity().y) == Math.signum(getGravityScale())) {
                 setDetached(false);
             }
         }
-        x = body.getPosition().x;
-        y = body.getPosition().y;
+        x = body.getPosition().x * BOX2D_SCALE;
+        y = body.getPosition().y * BOX2D_SCALE;
     }
 
-    public void render(ShapeRenderer shapeRenderer) {
+    @Override
+    public void render(SpriteBatch spriteBatch, ShapeRenderer shapeRenderer) {
+        shapeRenderer.begin();
         shapeRenderer.set(Filled);
         shapeRenderer.setColor(getColour());
         shapeRenderer.circle(getX(), getY(), getRadius());
         shapeRenderer.set(Line);
         shapeRenderer.setColor(getLineColour());
         shapeRenderer.circle(getX(), getY(), getRadius());
+        shapeRenderer.end();
     }
 
     private void createBody() {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = DynamicBody;
-        bodyDef.position.set(getX(), getY());
+        bodyDef.position.set(getX() / BOX2D_SCALE, getY() / BOX2D_SCALE);
         body = getLevel().getWorld().createBody(bodyDef);
         CircleShape shape = new CircleShape();
-        shape.setRadius(getRadius());
-        body.createFixture(shape, 0.0F);
+        shape.setRadius(getRadius() / BOX2D_SCALE);
+        body.createFixture(shape, 1F);
+        body.setUserData(this);
     }
 
     public Body getBody() {
