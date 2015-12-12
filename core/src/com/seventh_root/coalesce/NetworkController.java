@@ -27,4 +27,10 @@ public class NetworkController extends Controller {
             }
         }
     }
+
+    @Override
+    public void tick() {
+
+    }
+
 }

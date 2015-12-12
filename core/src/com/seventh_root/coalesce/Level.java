@@ -19,6 +19,7 @@ public class Level {
     private Array<Track> tracks;
     private Array<GameObject> objects;
     private transient RayHandler rayHandler;
+    private transient Array<Controller> controllers;
 
     public Level() {
         shapeRenderer = new ShapeRenderer();
@@ -26,17 +27,21 @@ public class Level {
         camera = new OrthographicCamera();
         camera.setToOrtho(true, 800, 600);
         Box2D.init();
-        world = new World(new Vector2(0F, 0F), true);
+        world = new World(new Vector2(0F, 98.1F), true);
         tracks = new Array<Track>();
         objects = new Array<GameObject>();
         rayHandler = new RayHandler(world);
         rayHandler.setShadows(false);
+        controllers = new Array<Controller>();
     }
 
     public void init() {
         for (GameObject object : getObjects()) {
             object.setLevel(this);
             object.init();
+            if (object instanceof Player) {
+                controllers.add(new KeyboardController((Player) object));
+            }
         }
         createLights();
     }
@@ -48,6 +53,9 @@ public class Level {
     }
 
     public void render(float delta) {
+        for (Controller controller : getControllers()) {
+            controller.tick();
+        }
         getWorld().step(delta, 6, 2);
         for (GameObject object : getObjects()) {
             object.tick(delta);
@@ -94,6 +102,10 @@ public class Level {
 
     public RayHandler getRayHandler() {
         return rayHandler;
+    }
+
+    public Array<Controller> getControllers() {
+        return controllers;
     }
 
 }

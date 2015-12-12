@@ -10,27 +10,27 @@
       "points": [
         {
           "x": 16,
-          "y": 16
+          "y": 32
         },
         {
           "x": 64,
-          "y": 16
+          "y": 32
         },
         {
           "x": 96,
-          "y": 32
+          "y": 48
+        },
+        {
+          "x": 128,
+          "y": 48
         },
         {
           "x": 128,
           "y": 32
-        },
-        {
-          "x": 128,
-          "y": 16
         },
         {
           "x": 256,
-          "y": 256
+          "y": 272
         }
       ]
     },
@@ -75,8 +75,7 @@
       "track": 0,
       "trackPos": 0,
       "x": 16,
-      "y": 16,
-      "yOffset": 0,
+      "y": 32,
       "radius": 4,
       "colour": {
         "r": 0.7019608,
@@ -90,15 +89,16 @@
         "b": 0.8,
         "a": 1
       },
-      "speed": 120
+      "speed": 120,
+      "gravityScale": -1,
+      "detached": false
     },
     {
       "class": "com.seventh_root.coalesce.Player",
       "track": 1,
       "trackPos": 0,
       "x": 16,
-      "y": 480,
-      "yOffset": 0,
+      "y": 552,
       "radius": 4,
       "colour": {
         "r": 0.29803923,
@@ -112,7 +112,9 @@
         "b": 0.8,
         "a": 1
       },
-      "speed": 120
+      "speed": 120,
+      "gravityScale": 1,
+      "detached": false
     }
   ]
 }

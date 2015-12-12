@@ -1,6 +1,6 @@
 package com.seventh_root.coalesce;
 
-public class Controller {
+public abstract class Controller {
 
     private Player player;
 
@@ -11,5 +11,7 @@ public class Controller {
     public Player getPlayer() {
         return player;
     }
+
+    public abstract void tick();
 
 }
