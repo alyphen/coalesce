@@ -144,8 +144,7 @@ public class Level {
         float targetY = (player1.getY() + player2.getY()) / 2;
         camera.position.set(targetX, targetY, 0);
         float dist = (float) Math.sqrt(Math.pow(player2.getX() - player1.getX(), 2) + Math.pow(player2.getY() - player1.getY(), 2));
-        float targetZoom = dist / 400F;
-        camera.zoom = targetZoom;
+        camera.zoom = dist / 400F;
         camera.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -220,4 +219,27 @@ public class Level {
     public Player getPlayer2() {
         return player2;
     }
+
+    public void notifyStartBoost(Player player) {
+        Array<Controller> controllersCopy = new Array<Controller>(getControllers());
+        for (Controller controller : controllersCopy) {
+            if (controller.getPlayer() == player) {
+                if (!(controller instanceof NetworkController)) {
+                    getScreen().getGame().getNetworkManager().sendMessage("B|S|" + player.getTrackPos() + "|" + player.getRadius());
+                }
+            }
+        }
+    }
+
+    public void notifyEndBoost(Player player) {
+        Array<Controller> controllersCopy = new Array<Controller>(getControllers());
+        for (Controller controller : controllersCopy) {
+            if (controller.getPlayer() == player) {
+                if (!(controller instanceof NetworkController)) {
+                    getScreen().getGame().getNetworkManager().sendMessage("B|E|" + player.getTrackPos() + "|" + player.getRadius());
+                }
+            }
+        }
+    }
+
 }

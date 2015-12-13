@@ -19,6 +19,15 @@ public class GamepadController extends Controller {
             getPlayer().jump();
             getPlayer().getLevel().getScreen().getGame().getNetworkManager().sendMessage("J|" + getPlayer().getTrackPos());
         }
+        if (controller.getButton(2)) {
+            if (!getPlayer().isBoost()) {
+                getPlayer().startBoost();
+            }
+        } else {
+            if (getPlayer().isBoost()) {
+                getPlayer().stopBoost();
+            }
+        }
     }
 
 }

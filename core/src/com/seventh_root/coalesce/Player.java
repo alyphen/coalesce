@@ -27,6 +27,8 @@ public class Player implements GameObject {
     private transient Body body;
     private float gravityScale;
     private boolean detached;
+    private boolean boost;
+    private float boostDrain;
 
     public Player(Track track, Color colour) {
         this.track = track;
@@ -133,6 +135,16 @@ public class Player implements GameObject {
 
     @Override
     public void tick(float delta) {
+        if (boost) {
+            boostDrain += delta;
+            while (boostDrain > 1){
+                setRadius(getRadius() - 1);
+                boostDrain -= 1;
+                if (radius <= 4) {
+                    stopBoost();
+                }
+            }
+        }
         if (getBody() == null) {
             createBody();
         }
@@ -189,4 +201,25 @@ public class Player implements GameObject {
             }
         }
     }
+
+    public void startBoost() {
+        if (!boost && getRadius() > 4) {
+            boost = true;
+            speed = speed + 120;
+            getLevel().notifyStartBoost(this);
+        }
+    }
+
+    public void stopBoost() {
+        if (boost) {
+            boost = false;
+            speed = speed - 120;
+            getLevel().notifyEndBoost(this);
+        }
+    }
+
+    public boolean isBoost() {
+        return boost;
+    }
+
 }

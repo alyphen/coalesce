@@ -16,4 +16,16 @@ public class NetworkController extends Controller {
         getPlayer().jump();
     }
 
+    public void startBoost(float pos, int radius) {
+        getPlayer().setTrackPos(pos);
+        getPlayer().setRadius(radius);
+        getPlayer().startBoost();
+    }
+
+    public void stopBoost(float pos, int radius) {
+        getPlayer().setTrackPos(pos);
+        getPlayer().setRadius(radius);
+        getPlayer().stopBoost();
+    }
+
 }

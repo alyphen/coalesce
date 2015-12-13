@@ -48,8 +48,8 @@ public class NetworkManager {
                         String message;
                         while (!shutdown && socket.isConnected() && (message = in.readLine()) != null) {
                             if (message.toUpperCase().startsWith("J")) {
+                                final float pos = Float.parseFloat(message.split("\\|")[1]);
                                 for (final NetworkController controller : controllers) {
-                                    final float pos = Float.parseFloat(message.split("\\|")[1]);
                                     Gdx.app.postRunnable(new Runnable() {
                                         @Override
                                         public void run() {
@@ -109,6 +109,31 @@ public class NetworkManager {
                                         game.setScreen(game.getMenuScreen());
                                     }
                                 });
+                            } else if (message.toUpperCase().startsWith("B")) {
+                                String[] parts = message.split("\\|");
+                                if (parts[1].equalsIgnoreCase("S")) {
+                                    final float pos = Float.parseFloat(message.split("\\|")[2]);
+                                    final int radius = Integer.parseInt(message.split("\\|")[3]);
+                                    for (final NetworkController controller : controllers) {
+                                        Gdx.app.postRunnable(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                controller.startBoost(pos, radius);
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    final float pos = Float.parseFloat(message.split("\\|")[2]);
+                                    final int radius = Integer.parseInt(message.split("\\|")[3]);
+                                    for (final NetworkController controller : controllers) {
+                                        Gdx.app.postRunnable(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                controller.stopBoost(pos, radius);
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         }
                         Gdx.app.postRunnable(new Runnable() {

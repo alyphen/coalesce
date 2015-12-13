@@ -18,6 +18,15 @@ public class KeyboardController extends Controller {
             getPlayer().jump();
             getPlayer().getLevel().getScreen().getGame().getNetworkManager().sendMessage("J|" + getPlayer().getTrackPos());
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            if (!getPlayer().isBoost()) {
+                getPlayer().startBoost();
+            }
+        } else {
+            if (getPlayer().isBoost()) {
+                getPlayer().stopBoost();
+            }
+        }
     }
 
 }

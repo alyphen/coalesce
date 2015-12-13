@@ -84,6 +84,8 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
                     game.setPlayer2Score(score);
                 }
             }
+        } else if (request.toUpperCase().startsWith("B")) {
+            server.getGameManager().getGame(player).sendMessageToOtherPlayer(player, request.trim().toUpperCase());
         } else if (request.toUpperCase().startsWith("Q")) {
             close = true;
         }
