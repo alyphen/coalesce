@@ -65,6 +65,7 @@ public class LoginScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        statusLabel.setText(game.getNetworkManager().getStatusMessage());
         if (game.getNetworkManager().isConnected()) {
             nameField.setDisabled(false);
             passwordField.setDisabled(false);

@@ -22,16 +22,16 @@ public class MenuScreen extends ScreenAdapter {
     private SpriteBatch spriteBatch;
 
     private Label playerNameLabel;
-    private Button logoutButton;
+    private TextButton logoutButton;
     private Label mmrLabel;
     private SelectBox<String> controllerSelectBox;
     //private Table matchesTable;
     //private TextArea chatTextArea;
     //private TextField chatTextField;
-    //private Button chatButton;
-    //private Button localButton;
-    //private Button unrankedButton;
-    private Button rankedButton;
+    //private TextButton chatButton;
+    //private TextButton localButton;
+    //private TextButton unrankedButton;
+    private TextButton rankedButton;
 
     public MenuScreen(Coalesce game) {
         this.game = game;
@@ -56,12 +56,13 @@ public class MenuScreen extends ScreenAdapter {
         controllerSelectBox.setItems(gamepadOptions);
         table.add(controllerSelectBox).width(256).right().padLeft(128).padRight(16);
         table.row();
-        rankedButton = new TextButton("Ranked", skin);
+        rankedButton = new TextButton("Search Ranked", skin);
         rankedButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Coalesce game = MenuScreen.this.game;
                 rankedButton.setDisabled(true);
+                rankedButton.setText("Searching...");
                 game.getNetworkManager().sendMessage("S");
             }
         });
@@ -73,6 +74,9 @@ public class MenuScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        if (!game.getNetworkManager().isConnected()) {
+            game.setScreen(game.getLoginScreen());
+        }
         playerNameLabel.setText("Logged in as: " + playerName);
         mmrLabel.setText(mmr + "mmr");
         Gdx.gl.glClearColor(0F, 0F, 0F, 1F);
@@ -119,6 +123,11 @@ public class MenuScreen extends ScreenAdapter {
 
     public String getSelectedController() {
         return controllerSelectBox.getSelected();
+    }
+
+    public void enableRankedButton() {
+        rankedButton.setText("Search Ranked");
+        rankedButton.setDisabled(false);
     }
 
 }

@@ -27,6 +27,9 @@ public class LevelScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        if (!getGame().getNetworkManager().isConnected()) {
+            getGame().setScreen(getGame().getLoginScreen());
+        }
         level.render(delta);
         if (!music.isPlaying() && !ended) {
             getGame().getNetworkManager().sendMessage("E|" + level.getPlayer2().getRadius());
@@ -55,7 +58,9 @@ public class LevelScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        level.dispose();
+        if (level != null) {
+            level.dispose();
+        }
         music.dispose();
         jumpDownSound.dispose();
         jumpUpSound.dispose();

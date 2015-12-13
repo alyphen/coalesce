@@ -24,9 +24,11 @@ public class NetworkManager {
     private String statusMessage;
 
     private boolean shutdown;
+    private boolean connected;
 
     public NetworkManager(Coalesce game) {
         this.game = game;
+        connected = false;
         controllers = new Array<NetworkController>();
         Net.Protocol protocol = Net.Protocol.TCP;
         //String host = "seventh-root.com";
@@ -41,6 +43,7 @@ public class NetworkManager {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream());
             statusMessage = "Connected.";
+            connected = true;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -107,6 +110,7 @@ public class NetworkManager {
                                         Coalesce game = NetworkManager.this.game;
                                         game.getMenuScreen().setMMR(newMMR);
                                         game.setScreen(game.getMenuScreen());
+                                        game.getMenuScreen().enableRankedButton();
                                     }
                                 });
                             } else if (message.toUpperCase().startsWith("B")) {
@@ -140,6 +144,7 @@ public class NetworkManager {
                             @Override
                             public void run() {
                                 statusMessage = "Disconnected.";
+                                connected = false;
                             }
                         });
                     } catch (final IOException exception) {
@@ -148,6 +153,7 @@ public class NetworkManager {
                             @Override
                             public void run() {
                                 statusMessage = exception.getMessage();
+                                connected = false;
                             }
                         });
                     }
@@ -155,6 +161,7 @@ public class NetworkManager {
             }).start();
         } catch (GdxRuntimeException exception) {
             statusMessage = exception.getMessage();
+            connected = false;
         }
     }
 
@@ -191,7 +198,7 @@ public class NetworkManager {
     }
 
     public boolean isConnected() {
-        return socket != null && socket.isConnected();
+        return connected;
     }
 
 }
