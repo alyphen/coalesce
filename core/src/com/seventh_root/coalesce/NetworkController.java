@@ -24,7 +24,11 @@ public class NetworkController extends Controller {
         String message;
         try {
             while ((message = in.readLine()) != null) {
-                if (message.trim().equalsIgnoreCase("J")) {
+                if (message.toUpperCase().startsWith("P")) {
+
+                } else if (message.toUpperCase().startsWith("J")) {
+                    int trackPos = Integer.parseInt(message.split(":")[1]);
+                    getPlayer().setTrackPos(trackPos);
                     getPlayer().jump();
                 }
             }

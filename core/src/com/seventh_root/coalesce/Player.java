@@ -16,7 +16,7 @@ import static com.seventh_root.coalesce.Level.BOX2D_SCALE;
 public class Player implements GameObject {
 
     private transient Level level;
-    private int track;
+    private Track track;
     private float trackPos;
     private float x;
     private float y;
@@ -28,10 +28,10 @@ public class Player implements GameObject {
     private float gravityScale;
     private boolean detached;
 
-    public Player(int track, Color colour) {
+    public Player(Track track, Color colour) {
         this.track = track;
-        this.x = level.getTrack(track).getPoint(0).x;
-        this.y = level.getTrack(track).getPoint(0).y;
+        this.x = track.getPoint(0).x;
+        this.y = track.getPoint(0).y;
         this.radius = 4;
         this.colour = colour;
         this.lineColour = new Color(0.8F, 0.8F, 0.8F, 1F);
@@ -52,15 +52,31 @@ public class Player implements GameObject {
     }
 
     public Track getTrack() {
-        return level.getTrack(track);
+        return track;
+    }
+
+    public float getTrackPos() {
+        return trackPos;
+    }
+
+    public void setTrackPos(float trackPos) {
+        this.trackPos = trackPos;
     }
 
     public float getX() {
         return x;
     }
 
+    public void setX(float x) {
+        this.x = x;
+    }
+
     public float getY() {
         return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public int getRadius() {
@@ -69,6 +85,8 @@ public class Player implements GameObject {
 
     public void setRadius(int radius) {
         this.radius = radius;
+        getLevel().destroy(getBody());
+        body = null;
     }
 
     public Color getColour() {
@@ -85,6 +103,10 @@ public class Player implements GameObject {
 
     public float getGravityScale() {
         return gravityScale;
+    }
+
+    public void setGravityScale(float gravityScale) {
+        this.gravityScale = gravityScale;
     }
 
     public boolean isDetached() {
@@ -109,6 +131,9 @@ public class Player implements GameObject {
 
     @Override
     public void tick(float delta) {
+        if (getBody() == null) {
+            createBody();
+        }
         if (!isDetached()) {
             trackPos += delta * speed;
             Vector2 pos = getTrack().getPointAt(trackPos);
@@ -141,9 +166,9 @@ public class Player implements GameObject {
         bodyDef.type = DynamicBody;
         bodyDef.position.set(getX() / BOX2D_SCALE, getY() / BOX2D_SCALE);
         body = getLevel().getWorld().createBody(bodyDef);
-        CircleShape shape = new CircleShape();
-        shape.setRadius(getRadius() / BOX2D_SCALE);
-        body.createFixture(shape, 1F);
+        CircleShape bodyShape = new CircleShape();
+        bodyShape.setRadius(getRadius() / BOX2D_SCALE);
+        body.createFixture(bodyShape, 8F / getRadius());
         body.setUserData(this);
     }
 
@@ -155,6 +180,11 @@ public class Player implements GameObject {
         if (Math.abs(y - getTrack().getPointAt(trackPos).y) < 4) {
             setDetached(true);
             getBody().applyLinearImpulse(0, getGravityScale() * -1000000, getX(), getY(), true);
+            if (getGravityScale() > 0) {
+                getLevel().getScreen().getJumpUpSound().play();
+            } else if (getGravityScale() < 0) {
+                getLevel().getScreen().getJumpDownSound().play();
+            }
         }
     }
 }

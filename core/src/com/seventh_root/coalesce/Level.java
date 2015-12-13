@@ -16,6 +16,8 @@ public class Level {
 
     public static final int BOX2D_SCALE = 1;
 
+    private LevelScreen screen;
+
     private transient SpriteBatch spriteBatch;
     private transient ShapeRenderer shapeRenderer;
     private transient OrthographicCamera camera;
@@ -25,11 +27,14 @@ public class Level {
     private transient World world;
     private Array<Track> tracks;
     private Array<GameObject> objects;
+    private Player player1;
+    private Player player2;
     private transient RayHandler rayHandler;
     private transient Array<Controller> controllers;
     private transient Array<Body> bodiesToDestroy;
 
-    public Level() {
+    public Level(LevelScreen screen) {
+        this.screen = screen;
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
@@ -37,7 +42,7 @@ public class Level {
         camera.setToOrtho(true, 800, 600);
         growthOrbTexture = new Texture(Gdx.files.internal("growth_orb.png"));
         Box2D.init();
-        world = new World(new Vector2(0F, 98.1F), true);
+        world = new World(new Vector2(0F, 98.1F), false);
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -84,6 +89,10 @@ public class Level {
         bodiesToDestroy = new Array<Body>();
     }
 
+    public LevelScreen getScreen() {
+        return screen;
+    }
+
     public void init() {
         Array<Controller> potentialControllers = new Array<Controller>();
         potentialControllers.add(new KeyboardController());
@@ -105,6 +114,10 @@ public class Level {
         createLights();
     }
 
+    public void destroy(Body body) {
+        bodiesToDestroy.add(body);
+    }
+
     public void createLights() {
         for (Track track : getTracks()) {
             track.createLights(getRayHandler());
@@ -119,17 +132,29 @@ public class Level {
         for (GameObject object : getObjects()) {
             object.tick(delta);
         }
+        Array<Body> bodiesRemoved = new Array<Body>();
         for (Body body : bodiesToDestroy) {
             Array<Body> bodies = new Array<Body>();
             getWorld().getBodies(bodies);
             if (bodies.contains(body, true)) {
-                getWorld().destroyBody(body);
+                if (!getWorld().isLocked()) {
+                    getWorld().destroyBody(body);
+                    bodiesRemoved.add(body);
+                }
             }
         }
+        bodiesToDestroy.removeAll(bodiesRemoved, true);
+        float targetX = (player1.getX() + player2.getX()) / 2;
+        float targetY = (player1.getY() + player2.getY()) / 2;
+        camera.position.set(targetX, targetY, 0);
+        float dist = (float) Math.sqrt(Math.pow(player2.getX() - player1.getX(), 2) + Math.pow(player2.getY() - player1.getY(), 2));
+        float targetZoom = dist / 400F;
+        camera.zoom = targetZoom;
         camera.update();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shapeRenderer.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
         for (Track track : getTracks()) {
             track.render(shapeRenderer);
         }
@@ -174,6 +199,14 @@ public class Level {
 
     public Array<Controller> getControllers() {
         return controllers;
+    }
+
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
     }
 
 }
