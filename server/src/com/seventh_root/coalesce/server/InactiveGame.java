@@ -55,6 +55,7 @@ public class InactiveGame {
             statement.setString(3, getPlayer2().getUUID().toString());
             statement.setString(4, getWinner().getUUID().toString());
             statement.setLong(5, getTimestamp());
+            statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to insert game", exception);
         }
@@ -67,6 +68,7 @@ public class InactiveGame {
             statement.setString(3, getWinner().getUUID().toString());
             statement.setLong(4, getTimestamp());
             statement.setString(5, getUUID().toString());
+            statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to update game", exception);
         }
@@ -75,6 +77,7 @@ public class InactiveGame {
     public void delete() throws SQLException {
         try (PreparedStatement statement = databaseConnection.prepareStatement("DELETE FROM `game` WHERE `uuid` = ?")) {
             statement.setString(1, getUUID().toString());
+            statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to delete game", exception);
         }

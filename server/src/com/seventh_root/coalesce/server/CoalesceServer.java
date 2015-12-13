@@ -58,7 +58,7 @@ public class CoalesceServer {
             getLogger().log(SEVERE, "Failed to connect to database", exception);
         }
         gameManager = new GameManager(this);
-        playerManager = new PlayerManager(getDatabaseConnection());
+        playerManager = new PlayerManager(this, getDatabaseConnection());
     }
 
     public Config getConfig() {

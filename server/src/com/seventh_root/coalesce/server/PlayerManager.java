@@ -10,12 +10,14 @@ import java.util.UUID;
 
 public class PlayerManager {
 
+    private CoalesceServer server;
     private Connection databaseConnection;
 
     private Map<String, Player> playersByUUID;
     private Map<String, Player> playersByName;
 
-    public PlayerManager(Connection databaseConnection) {
+    public PlayerManager(CoalesceServer server, Connection databaseConnection) {
+        this.server = server;
         this.databaseConnection = databaseConnection;
         playersByUUID = new HashMap<>();
         playersByName = new HashMap<>();
@@ -63,4 +65,7 @@ public class PlayerManager {
         return null;
     }
 
+    public CoalesceServer getServer() {
+        return server;
+    }
 }

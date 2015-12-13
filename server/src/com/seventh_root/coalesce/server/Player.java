@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static java.util.logging.Level.SEVERE;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 public class Player {
@@ -121,43 +122,54 @@ public class Player {
     }
 
     public void insert() throws SQLException {
+        try (
         PreparedStatement statement = getDatabaseConnection().prepareStatement(
                 "INSERT INTO `player`(`uuid`, `name`, `password_hash`, `password_salt`, `mmr`, `rating_deviation`, `volatility`, `number_of_results`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-        setUUID(UUID.randomUUID());
-        statement.setString(1, getUUID().toString());
-        statement.setString(2, getName());
-        statement.setString(3, getPasswordHash());
-        statement.setString(4, getPasswordSalt());
-        statement.setDouble(5, getMMR());
-        statement.setDouble(6, getRatingDeviation());
-        statement.setDouble(7, getVolatility());
-        statement.setInt(8, getNumberOfResults());
-        statement.executeUpdate();
-        playerManager.cachePlayer(this);
+        )) {
+            setUUID(UUID.randomUUID());
+            statement.setString(1, getUUID().toString());
+            statement.setString(2, getName());
+            statement.setString(3, getPasswordHash());
+            statement.setString(4, getPasswordSalt());
+            statement.setDouble(5, getMMR());
+            statement.setDouble(6, getRatingDeviation());
+            statement.setDouble(7, getVolatility());
+            statement.setInt(8, getNumberOfResults());
+            statement.executeUpdate();
+            playerManager.cachePlayer(this);
+        } catch (SQLException exception) {
+            playerManager.getServer().getLogger().log(SEVERE, "Failed to insert player", exception);
+        }
     }
 
     public void update() throws SQLException {
-        PreparedStatement statement = getDatabaseConnection().prepareStatement(
+        try (PreparedStatement statement = getDatabaseConnection().prepareStatement(
                 "UPDATE `player` SET `name` = ?, `password_hash` = ?, `password_salt` = ?, `mmr` = ?, `rating_deviation` = ?, `volatility` = ?, `number_of_results` = ? WHERE `uuid` = ?"
-        );
-        statement.setString(1, getName());
-        statement.setString(2, getPasswordHash());
-        statement.setString(3, getPasswordSalt());
-        statement.setDouble(4, getMMR());
-        statement.setDouble(5, getRatingDeviation());
-        statement.setDouble(6, getVolatility());
-        statement.setInt(7, getNumberOfResults());
-        statement.setString(8, getUUID().toString());
-        statement.executeUpdate();
+        )) {
+            statement.setString(1, getName());
+            statement.setString(2, getPasswordHash());
+            statement.setString(3, getPasswordSalt());
+            statement.setDouble(4, getMMR());
+            statement.setDouble(5, getRatingDeviation());
+            statement.setDouble(6, getVolatility());
+            statement.setInt(7, getNumberOfResults());
+            statement.setString(8, getUUID().toString());
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            playerManager.getServer().getLogger().log(SEVERE, "Failed to update player", exception);
+        }
     }
 
     public void delete() throws SQLException {
-        PreparedStatement statement = getDatabaseConnection().prepareStatement(
+        try (PreparedStatement statement = getDatabaseConnection().prepareStatement(
                 "DELETE FROM `player` WHERE `uuid` = ?"
-        );
-        statement.setString(1, getUUID().toString());
-        playerManager.uncachePlayer(this);
+        )) {
+            statement.setString(1, getUUID().toString());
+            statement.executeUpdate();
+            playerManager.uncachePlayer(this);
+        } catch (SQLException exception) {
+            playerManager.getServer().getLogger().log(SEVERE, "Failed to delete player", exception);
+        }
     }
 
 }
