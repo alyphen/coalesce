@@ -117,6 +117,26 @@ project(":core") {
     }
 }
 
+project(":server") {
+    apply plugin: "java"
+
+    ext {
+        nettyVersion = '5.0.0.Alpha2'
+        mysqlConnectorVersion = '5.1.38'
+        commonsCodecVersion = '1.10'
+        commonsLangVersion = '2.6'
+        gsonVersion = '2.5'
+    }
+
+    dependencies {
+        compile "io.netty:netty-all:$nettyVersion"
+        compile "mysql:mysql-connector-java:$mysqlConnectorVersion"
+        compile "commons-codec:commons-codec:$commonsCodecVersion"
+        compile "commons-lang:commons-lang:$commonsLangVersion"
+        compile "com.google.code.gson:gson:$gsonVersion"
+    }
+}
+
 tasks.eclipse.doLast {
     delete ".project"
 }

@@ -2,7 +2,6 @@ package com.seventh_root.coalesce;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -94,22 +93,15 @@ public class Level {
     }
 
     public void init() {
-        Array<Controller> potentialControllers = new Array<Controller>();
-        potentialControllers.add(new KeyboardController());
-        for (int i = 0; i < Controllers.getControllers().size; i++) {
-            potentialControllers.add(new GamepadController(Controllers.getControllers().get(i)));
+        if (getScreen().getGame().getMenuScreen().getSelectedController().equals("Keyboard")) {
+            controllers.add(new KeyboardController(player2));
         }
-        int nextAvailableControllerIndex = 0;
+        NetworkController networkController = new NetworkController(player1);
+        controllers.add(networkController);
+        getScreen().getGame().getNetworkManager().addController(networkController);
         for (GameObject object : getObjects()) {
             object.setLevel(this);
             object.init();
-            if (object instanceof Player) {
-                if (nextAvailableControllerIndex < potentialControllers.size) {
-                    Controller nextAvailableController = potentialControllers.get(nextAvailableControllerIndex++);
-                    nextAvailableController.setPlayer((Player) object);
-                    controllers.add(nextAvailableController);
-                }
-            }
         }
         createLights();
     }
@@ -207,6 +199,14 @@ public class Level {
 
     public void setPlayer2(Player player2) {
         this.player2 = player2;
+    }
+
+    public void dispose() {
+        spriteBatch.dispose();
+        shapeRenderer.dispose();
+        growthOrbTexture.dispose();
+        world.dispose();
+        rayHandler.dispose();
     }
 
 }
