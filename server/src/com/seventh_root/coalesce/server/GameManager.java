@@ -47,6 +47,11 @@ public class GameManager {
         }
     }
 
+    public void finishGame(ActiveGame game) {
+        activeGames.remove(game.getPlayer1().getUUID().toString());
+        activeGames.remove(game.getPlayer2().getUUID().toString());
+    }
+
     private void adjustMMR(ActiveGame game, Player winner) {
         Player player1 = game.getPlayer1();
         Player player2 = game.getPlayer2();
@@ -132,6 +137,21 @@ public class GameManager {
         }
         for (Player player : toRemove) {
             searching.remove(player);
+        }
+        Set<ActiveGame> tooLongGames = new HashSet<>();
+        for (ActiveGame game : activeGames.values()) {
+            if (System.currentTimeMillis() - game.getTimestamp() > 300000L) {
+                tooLongGames.add(game);
+            }
+        }
+        for (ActiveGame game : tooLongGames) {
+            if (game.getPlayer1Score() < 0) {
+                finishGame(game, game.getPlayer2());
+            } else if (game.getPlayer2Score() < 0) {
+                finishGame(game, game.getPlayer1());
+            } else {
+                finishGame(game);
+            }
         }
     }
 

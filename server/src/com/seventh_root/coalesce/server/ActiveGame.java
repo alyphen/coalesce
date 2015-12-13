@@ -72,6 +72,10 @@ public class ActiveGame {
         }
     }
 
+    public int getPlayer1Score() {
+        return player1Score;
+    }
+
     public void setPlayer2Score(int player2Score) {
         this.player2Score = player2Score;
         if (player1Score > -1) {
@@ -83,4 +87,7 @@ public class ActiveGame {
         }
     }
 
+    public int getPlayer2Score() {
+        return player2Score;
+    }
 }
