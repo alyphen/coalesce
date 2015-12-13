@@ -242,4 +242,14 @@ public class Level {
         }
     }
 
+    public void notifyJump(Player player) {
+        Array<Controller> controllersCopy = new Array<Controller>(getControllers());
+        for (Controller controller : controllersCopy) {
+            if (controller.getPlayer() == player) {
+                if (!(controller instanceof NetworkController)) {
+                    getScreen().getGame().getNetworkManager().sendMessage("J|" + player.getTrackPos());
+                }
+            }
+        }
+    }
 }

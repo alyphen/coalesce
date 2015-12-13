@@ -192,6 +192,7 @@ public class Player implements GameObject {
 
     public void jump() {
         if (Math.abs(y - getTrack().getPointAt(trackPos).y) < 4) {
+            getLevel().notifyJump(this);
             setDetached(true);
             getBody().applyLinearImpulse(0, getGravityScale() * -1000000, getX(), getY(), true);
             if (getGravityScale() > 0) {

@@ -17,7 +17,6 @@ public class GamepadController extends Controller {
     public void tick() {
         if (controller.getButton(0)) {
             getPlayer().jump();
-            getPlayer().getLevel().getScreen().getGame().getNetworkManager().sendMessage("J|" + getPlayer().getTrackPos());
         }
         if (controller.getButton(2)) {
             if (!getPlayer().isBoost()) {
