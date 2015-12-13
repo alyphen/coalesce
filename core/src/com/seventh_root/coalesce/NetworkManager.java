@@ -99,6 +99,16 @@ public class NetworkManager {
                                         game.setScreen(game.getLevelScreen());
                                     }
                                 });
+                            } else if (message.toUpperCase().startsWith("M")) {
+                                final int newMMR = Integer.parseInt(message.split("\\|")[1]);
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Coalesce game = NetworkManager.this.game;
+                                        game.getMenuScreen().setMMR(newMMR);
+                                        game.setScreen(game.getMenuScreen());
+                                    }
+                                });
                             }
                         }
                         Gdx.app.postRunnable(new Runnable() {

@@ -2,6 +2,7 @@ package com.seventh_root.coalesce;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -95,6 +96,9 @@ public class Level {
     public void init() {
         if (getScreen().getGame().getMenuScreen().getSelectedController().equals("Keyboard")) {
             controllers.add(new KeyboardController(player2));
+        } else {
+            int gamepadId = Integer.parseInt(getScreen().getGame().getMenuScreen().getSelectedController().split("\\|")[0]);
+            controllers.add(new GamepadController(player2, Controllers.getControllers().get(gamepadId)));
         }
         NetworkController networkController = new NetworkController(player1);
         controllers.add(networkController);
@@ -209,4 +213,11 @@ public class Level {
         rayHandler.dispose();
     }
 
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
 }

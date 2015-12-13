@@ -6,8 +6,10 @@ import org.goochjs.glicko2.RatingCalculator;
 import org.goochjs.glicko2.RatingPeriodResults;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.logging.Level.SEVERE;
@@ -34,6 +36,8 @@ public class GameManager {
     }
 
     public void finishGame(ActiveGame game, Player winner) {
+        activeGames.remove(game.getPlayer1().getUUID().toString());
+        activeGames.remove(game.getPlayer2().getUUID().toString());
         adjustMMR(game, winner);
         InactiveGame inactiveGame = new InactiveGame(server, server.getDatabaseConnection(), game, winner);
         try {
@@ -75,6 +79,14 @@ public class GameManager {
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to update player MMR", exception);
         }
+        Channel player1Channel = server.getHandler().getChannel(player1);
+        if (player1Channel != null) {
+            player1Channel.writeAndFlush("M|" + (int) Math.round(player1.getMMR()) + "\n");
+        }
+        Channel player2Channel = server.getHandler().getChannel(player2);
+        if (player2Channel != null) {
+            player2Channel.writeAndFlush("M|" + (int) Math.round(player2.getMMR()) + "\n");
+        }
     }
 
     public ActiveGame getGame(Player player) {
@@ -86,6 +98,7 @@ public class GameManager {
     }
 
     public void onTick() {
+        Set<Player> toRemove = new HashSet<>();
         for (Player player : searching.keySet()) {
             if (getGame(player) == null) {
                 searching.put(player, searching.get(player) + 1);
@@ -94,7 +107,7 @@ public class GameManager {
                     if (Math.abs(potentialMatch.getMMR() - player.getMMR()) < Math.min(searching.get(player), searching.get(potentialMatch))) {
                         Channel player1Channel = server.getHandler().getChannel(player);
                         Channel player2Channel = server.getHandler().getChannel(potentialMatch);
-                        ActiveGame game = new ActiveGame(player, potentialMatch, player1Channel, player2Channel);
+                        ActiveGame game = new ActiveGame(this, player, potentialMatch, player1Channel, player2Channel);
                         StringBuilder levelBuilder = new StringBuilder();
                         Random random = new Random();
                         for (int i = 0; i < 100000; i += 64) {
@@ -113,7 +126,12 @@ public class GameManager {
                         break;
                     }
                 }
+            } else {
+                toRemove.add(player);
             }
+        }
+        for (Player player : toRemove) {
+            searching.remove(player);
         }
     }
 

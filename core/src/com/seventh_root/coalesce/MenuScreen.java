@@ -51,7 +51,7 @@ public class MenuScreen extends ScreenAdapter {
         gamepadOptions.add("Keyboard");
         for (int i = 0; i < Controllers.getControllers().size; i++) {
             Controller controller = Controllers.getControllers().get(i);
-            gamepadOptions.add(i + " | " + controller.getName());
+            gamepadOptions.add(i + "| " + controller.getName());
         }
         controllerSelectBox.setItems(gamepadOptions);
         table.add(controllerSelectBox).width(256).right().padLeft(128).padRight(16);

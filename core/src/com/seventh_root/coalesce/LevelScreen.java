@@ -14,6 +14,7 @@ public class LevelScreen extends ScreenAdapter {
     private Music music;
     private Sound jumpDownSound;
     private Sound jumpUpSound;
+    private boolean ended;
 
     public LevelScreen(Coalesce game) {
         this.game = game;
@@ -27,6 +28,10 @@ public class LevelScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         level.render(delta);
+        if (!music.isPlaying() && !ended) {
+            getGame().getNetworkManager().sendMessage("E|" + level.getPlayer2().getRadius());
+            ended = true;
+        }
     }
 
     @Override
@@ -57,6 +62,7 @@ public class LevelScreen extends ScreenAdapter {
     }
 
     public void loadLevel(Array<Integer> offsets) {
+        ended = false;
         level = new Level(this);
         Track track1 = new Track();
         track1.setColour(new Color(0.2509804F, 0F, 0F, 1F));

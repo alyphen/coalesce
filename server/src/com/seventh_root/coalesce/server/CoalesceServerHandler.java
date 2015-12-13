@@ -73,6 +73,15 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
             server.getLogger().info(player.getName() + " started searching for ranked games (" + player.getMMR() + "mmr)");
         } else if (request.toUpperCase().startsWith("J")) {
             server.getGameManager().getGame(player).sendMessageToOtherPlayer(player, request.trim().toUpperCase());
+        } else if (request.toUpperCase().startsWith("E")) {
+            String[] parts = request.split("\\|");
+            int score = Integer.parseInt(parts[1]);
+            ActiveGame game = server.getGameManager().getGame(player);
+            if (game.getPlayer1().getUUID().toString().equalsIgnoreCase(player.getUUID().toString())) {
+                game.setPlayer1Score(score);
+            } else {
+                game.setPlayer2Score(score);
+            }
         } else if (request.toUpperCase().startsWith("Q")) {
             close = true;
         }
