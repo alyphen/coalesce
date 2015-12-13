@@ -138,6 +138,10 @@ public class NetworkManager {
                                         });
                                     }
                                 }
+                            } else if (message.toUpperCase().startsWith("T")) {
+                                Coalesce game = NetworkManager.this.game;
+                                String[] parts = message.split("\\|");
+                                game.getMenuScreen().appendChat(parts[1], parts[2]);
                             }
                         }
                         Gdx.app.postRunnable(new Runnable() {

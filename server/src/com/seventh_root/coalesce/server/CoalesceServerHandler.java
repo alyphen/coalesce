@@ -86,6 +86,10 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
             }
         } else if (request.toUpperCase().startsWith("B")) {
             server.getGameManager().getGame(player).sendMessageToOtherPlayer(player, request.trim().toUpperCase());
+        } else if (request.toUpperCase().startsWith("T")) {
+            String[] parts = request.split("\\|");
+            server.getLogger().info("Chat message from " + parts[1] + ": " + parts[2]);
+            channels.writeAndFlush(request + "\n");
         } else if (request.toUpperCase().startsWith("Q")) {
             close = true;
         }

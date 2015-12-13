@@ -26,9 +26,9 @@ public class MenuScreen extends ScreenAdapter {
     private Label mmrLabel;
     private SelectBox<String> controllerSelectBox;
     //private Table matchesTable;
-    //private TextArea chatTextArea;
-    //private TextField chatTextField;
-    //private TextButton chatButton;
+    private TextArea chatTextArea;
+    private TextField chatTextField;
+    private TextButton chatButton;
     //private TextButton localButton;
     //private TextButton unrankedButton;
     private TextButton rankedButton;
@@ -45,6 +45,13 @@ public class MenuScreen extends ScreenAdapter {
         table.add(mmrLabel).width(256).right().padLeft(128).padRight(16).padTop(16).padBottom(16);
         table.row();
         logoutButton = new TextButton("Logout", skin);
+        logoutButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Coalesce game = MenuScreen.this.game;
+                game.setScreen(game.getLoginScreen());
+            }
+        });
         table.add(logoutButton).width(256).left().padLeft(16);
         controllerSelectBox = new SelectBox<String>(skin);
         Array<String> gamepadOptions = new Array<String>();
@@ -55,6 +62,24 @@ public class MenuScreen extends ScreenAdapter {
         }
         controllerSelectBox.setItems(gamepadOptions);
         table.add(controllerSelectBox).width(256).right().padLeft(128).padRight(16);
+        table.row();
+        chatTextArea = new TextArea("", skin);
+        chatTextArea.setDisabled(true);
+        table.add(chatTextArea).colspan(2).width(512).height(128).center().padTop(16).padBottom(16);
+        table.row();
+        chatTextField = new TextField("", skin);
+        table.add(chatTextField).colspan(2).width(256).center().padBottom(16);
+        table.row();
+        chatButton = new TextButton("Send", skin);
+        chatButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Coalesce game = MenuScreen.this.game;
+                game.getNetworkManager().sendMessage("T|" + playerName + "|" + chatTextField.getText());
+                chatTextField.setText("");
+            }
+        });
+        table.add(chatButton).colspan(2).width(128).center().padBottom(16);
         table.row();
         rankedButton = new TextButton("Search Ranked", skin);
         rankedButton.addListener(new ChangeListener() {
@@ -128,6 +153,10 @@ public class MenuScreen extends ScreenAdapter {
     public void enableRankedButton() {
         rankedButton.setText("Search Ranked");
         rankedButton.setDisabled(false);
+    }
+
+    public void appendChat(String player, String message) {
+        chatTextArea.appendText(player + ": " + message + "\n");
     }
 
 }
