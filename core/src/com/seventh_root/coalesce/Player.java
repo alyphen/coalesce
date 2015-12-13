@@ -40,9 +40,6 @@ public class Player implements GameObject {
         this.detached = false;
     }
 
-    public Player() {
-    }
-
     public void init() {
         createBody();
     }
@@ -61,6 +58,11 @@ public class Player implements GameObject {
 
     public void setTrackPos(float trackPos) {
         this.trackPos = trackPos;
+        Vector2 pos = getTrack().getPointAt(trackPos);
+        body.setGravityScale(0F);
+        body.setTransform(pos.x / BOX2D_SCALE, pos.y / BOX2D_SCALE, 0);
+        x = body.getPosition().x * BOX2D_SCALE;
+        y = body.getPosition().y * BOX2D_SCALE;
     }
 
     public float getX() {
