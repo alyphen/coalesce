@@ -48,7 +48,7 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
             String playerName = parts[1];
             String password = parts[2];
             try {
-                player = server.getPlayerManager().getByName(server.getDatabaseConnection(), playerName);
+                player = server.getPlayerManager().getByName(playerName);
                 if (player != null) {
                     if (player.checkPassword(password)) {
                         ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).set(player);

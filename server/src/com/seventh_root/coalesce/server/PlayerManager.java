@@ -33,16 +33,16 @@ public class PlayerManager {
         playersByName.remove(player.getName());
     }
 
-    public Player getByUUID(Connection databaseConnection, UUID uuid) throws SQLException {
+    public Player getByUUID(UUID uuid) throws SQLException {
         if (playersByUUID.containsKey(uuid.toString())) return playersByUUID.get(uuid.toString());
         if (databaseConnection != null) {
             PreparedStatement statement = databaseConnection.prepareStatement(
-                    "SELECT uuid, name, password_hash, password_salt, mmr FROM player WHERE uuid = ? LIMIT 1"
+                    "SELECT `uuid`, `name`, `password_hash`, `password_salt`, `mmr`, `rating_deviation`, `volatility`, `number_of_results` FROM `player` WHERE `uuid` = ? LIMIT 1"
             );
             statement.setString(1, uuid.toString());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                Player player = new Player(this, databaseConnection, UUID.fromString(resultSet.getString("uuid")), resultSet.getString("name"), resultSet.getString("password_hash"), resultSet.getString("password_salt"), resultSet.getInt("mmr"));
+                Player player = new Player(this, databaseConnection, UUID.fromString(resultSet.getString("uuid")), resultSet.getString("name"), resultSet.getString("password_hash"), resultSet.getString("password_salt"), resultSet.getInt("mmr"), resultSet.getDouble("rating_deviation"), resultSet.getDouble("volatility"), resultSet.getInt("number_of_results"));
                 cachePlayer(player);
                 return player;
             }
@@ -50,16 +50,16 @@ public class PlayerManager {
         return null;
     }
 
-    public Player getByName(Connection databaseConnection, String playerName) throws SQLException {
+    public Player getByName(String playerName) throws SQLException {
         if (playersByName.containsKey(playerName)) return playersByName.get(playerName);
         if (databaseConnection != null) {
             PreparedStatement statement = databaseConnection.prepareStatement(
-                    "SELECT uuid, name, password_hash, password_salt, mmr FROM player WHERE name = ? LIMIT 1"
+                    "SELECT `uuid`, `name`, `password_hash`, `password_salt`, `mmr`, `rating_deviation`, `volatility`, `number_of_results` FROM `player` WHERE `name` = ? LIMIT 1"
             );
             statement.setString(1, playerName);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return new Player(this, databaseConnection, UUID.fromString(resultSet.getString("uuid")), resultSet.getString("name"), resultSet.getString("password_hash"), resultSet.getString("password_salt"), resultSet.getInt("mmr"));
+                return new Player(this, databaseConnection, UUID.fromString(resultSet.getString("uuid")), resultSet.getString("name"), resultSet.getString("password_hash"), resultSet.getString("password_salt"), resultSet.getInt("mmr"), resultSet.getDouble("rating_deviation"), resultSet.getDouble("volatility"), resultSet.getInt("number_of_results"));
             }
         }
         return null;

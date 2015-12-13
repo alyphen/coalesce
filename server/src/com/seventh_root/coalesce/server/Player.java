@@ -36,7 +36,7 @@ public class Player {
         insert();
     }
 
-    public Player(PlayerManager playerManager, Connection databaseConnection, UUID uuid, String name, String passwordHash, String passwordSalt, double mmr) {
+    public Player(PlayerManager playerManager, Connection databaseConnection, UUID uuid, String name, String passwordHash, String passwordSalt, double mmr, double ratingDeviation, double volatility, int numberOfResults) {
         this.playerManager = playerManager;
         this.databaseConnection = databaseConnection;
         this.uuid = uuid;
@@ -44,12 +44,9 @@ public class Player {
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
         this.mmr = mmr;
-    }
-
-    public Player(UUID uuid, String name, double mmr) {
-        this.uuid = uuid;
-        this.name = name;
-        this.mmr = mmr;
+        this.ratingDeviation = ratingDeviation;
+        this.volatility = volatility;
+        this.numberOfResults = numberOfResults;
     }
 
     public Connection getDatabaseConnection() {
