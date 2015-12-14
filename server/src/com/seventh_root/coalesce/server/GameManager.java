@@ -155,4 +155,8 @@ public class GameManager {
         }
     }
 
+    public void stopSearching(Player player) {
+        searching.remove(player);
+    }
+
 }

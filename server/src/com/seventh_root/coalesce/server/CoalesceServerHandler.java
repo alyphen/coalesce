@@ -36,6 +36,10 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        Player player = ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).get();
+        if (player != null) {
+            server.getGameManager().stopSearching(player);
+        }
         server.getLogger().log(INFO, "Player disconnected from " + ipAddress(ctx.channel()));
     }
 
