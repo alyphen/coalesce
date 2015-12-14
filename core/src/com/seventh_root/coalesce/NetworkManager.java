@@ -51,7 +51,7 @@ public class NetworkManager {
                         String message;
                         while (!shutdown && socket.isConnected() && (message = in.readLine()) != null) {
                             if (message.toUpperCase().startsWith("J")) {
-                                final float pos = Float.parseFloat(message.split("\\|")[1]);
+                                final float pos = Float.parseFloat(message.split("\\|", -1)[1]);
                                 for (final NetworkController controller : controllers) {
                                     Gdx.app.postRunnable(new Runnable() {
                                         @Override
@@ -69,8 +69,8 @@ public class NetworkManager {
                                     }
                                 });
                             } else if (message.toUpperCase().startsWith("L")) {
-                                final String playerName = message.split("\\|")[1];
-                                final int mmr = Integer.parseInt(message.split("\\|")[2]);
+                                final String playerName = message.split("\\|", -1)[1];
+                                final int mmr = Integer.parseInt(message.split("\\|", -1)[2]);
                                 Gdx.app.postRunnable(new Runnable() {
                                     @Override
                                     public void run() {
@@ -89,7 +89,7 @@ public class NetworkManager {
                                 });
                             } else if (message.toUpperCase().startsWith("G")) {
                                 controllers.clear();
-                                String[] offsetStrings = message.substring(2).split("\\|");
+                                String[] offsetStrings = message.substring(2).split("\\|", -1);
                                 final Array<Integer> offsets = new Array<Integer>();
                                 for (String offsetString : offsetStrings) {
                                     offsets.add(Integer.parseInt(offsetString));
@@ -103,7 +103,7 @@ public class NetworkManager {
                                     }
                                 });
                             } else if (message.toUpperCase().startsWith("M")) {
-                                final int newMMR = Integer.parseInt(message.split("\\|")[1]);
+                                final int newMMR = Integer.parseInt(message.split("\\|", -1)[1]);
                                 Gdx.app.postRunnable(new Runnable() {
                                     @Override
                                     public void run() {
@@ -114,10 +114,10 @@ public class NetworkManager {
                                     }
                                 });
                             } else if (message.toUpperCase().startsWith("B")) {
-                                String[] parts = message.split("\\|");
+                                String[] parts = message.split("\\|", -1);
                                 if (parts[1].equalsIgnoreCase("S")) {
-                                    final float pos = Float.parseFloat(message.split("\\|")[2]);
-                                    final int radius = Integer.parseInt(message.split("\\|")[3]);
+                                    final float pos = Float.parseFloat(message.split("\\|", -1)[2]);
+                                    final int radius = Integer.parseInt(message.split("\\|", -1)[3]);
                                     for (final NetworkController controller : controllers) {
                                         Gdx.app.postRunnable(new Runnable() {
                                             @Override
@@ -127,8 +127,8 @@ public class NetworkManager {
                                         });
                                     }
                                 } else {
-                                    final float pos = Float.parseFloat(message.split("\\|")[2]);
-                                    final int radius = Integer.parseInt(message.split("\\|")[3]);
+                                    final float pos = Float.parseFloat(message.split("\\|", -1)[2]);
+                                    final int radius = Integer.parseInt(message.split("\\|", -1)[3]);
                                     for (final NetworkController controller : controllers) {
                                         Gdx.app.postRunnable(new Runnable() {
                                             @Override
@@ -140,7 +140,7 @@ public class NetworkManager {
                                 }
                             } else if (message.toUpperCase().startsWith("T")) {
                                 Coalesce game = NetworkManager.this.game;
-                                String[] parts = message.split("\\|");
+                                String[] parts = message.split("\\|", -1);
                                 game.getMenuScreen().appendChat(parts[1], parts[2]);
                             }
                         }

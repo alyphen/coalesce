@@ -48,7 +48,7 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
         boolean close = false;
         Player player = ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).get();
         if (request.toUpperCase().startsWith("P")) {
-            String[] parts = request.split("\\|");
+            String[] parts = request.split("\\|", -1);
             String playerName = parts[1];
             String password = parts[2];
             try {
@@ -78,7 +78,7 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
         } else if (request.toUpperCase().startsWith("J")) {
             server.getGameManager().getGame(player).sendMessageToOtherPlayer(player, request.trim().toUpperCase());
         } else if (request.toUpperCase().startsWith("E")) {
-            String[] parts = request.split("\\|");
+            String[] parts = request.split("\\|", -1);
             int score = Integer.parseInt(parts[1]);
             ActiveGame game = server.getGameManager().getGame(player);
             if (game != null) {
@@ -91,7 +91,7 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
         } else if (request.toUpperCase().startsWith("B")) {
             server.getGameManager().getGame(player).sendMessageToOtherPlayer(player, request.trim().toUpperCase());
         } else if (request.toUpperCase().startsWith("T")) {
-            String[] parts = request.split("\\|");
+            String[] parts = request.split("\\|", -1);
             server.getLogger().info("Chat message from " + parts[1] + ": " + parts[2]);
             channels.writeAndFlush(request + "\n");
         } else if (request.toUpperCase().startsWith("Q")) {

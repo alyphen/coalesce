@@ -97,7 +97,7 @@ public class Level {
         if (getScreen().getGame().getMenuScreen().getSelectedController().equals("Keyboard")) {
             controllers.add(new KeyboardController(player2));
         } else {
-            int gamepadId = Integer.parseInt(getScreen().getGame().getMenuScreen().getSelectedController().split("\\|")[0]);
+            int gamepadId = Integer.parseInt(getScreen().getGame().getMenuScreen().getSelectedController().split("\\|", -1)[0]);
             controllers.add(new GamepadController(player2, Controllers.getControllers().get(gamepadId)));
         }
         NetworkController networkController = new NetworkController(player1);

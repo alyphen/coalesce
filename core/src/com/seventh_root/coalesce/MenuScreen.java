@@ -74,9 +74,11 @@ public class MenuScreen extends ScreenAdapter {
         chatButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Coalesce game = MenuScreen.this.game;
-                game.getNetworkManager().sendMessage("T|" + playerName + "|" + chatTextField.getText());
-                chatTextField.setText("");
+                if (chatTextField.getText().length() > 0) {
+                    Coalesce game = MenuScreen.this.game;
+                    game.getNetworkManager().sendMessage("T|" + playerName + "|" + chatTextField.getText());
+                    chatTextField.setText("");
+                }
             }
         });
         table.add(chatButton).colspan(2).width(128).center().padBottom(16);
