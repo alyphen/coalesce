@@ -122,9 +122,9 @@ public class GameManager {
                                     offset = 240 + random.nextInt(16);
                                 }
                             }
-                            levelBuilder.append(offset).append("|");
+                            levelBuilder.append("|").append(offset);
                         }
-                        String message = "G|" + levelBuilder.toString() + "\n";
+                        String message = "G" + levelBuilder.toString() + "\n";
                         player1Channel.writeAndFlush(message);
                         player2Channel.writeAndFlush(message);
                         addGame(game);
