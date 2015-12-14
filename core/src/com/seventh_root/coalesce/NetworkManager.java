@@ -31,8 +31,8 @@ public class NetworkManager {
         connected = false;
         controllers = new Array<NetworkController>();
         Net.Protocol protocol = Net.Protocol.TCP;
-        //String host = "seventh-root.com";
-        String host = "localhost";
+        String host = "seventh-root.com";
+        //String host = "localhost";
         int port = 30512;
         SocketHints hints = new SocketHints();
         hints.connectTimeout = 15000;
