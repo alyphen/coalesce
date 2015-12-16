@@ -126,6 +126,7 @@ project(":server") {
         commonsCodecVersion = '1.10'
         commonsLangVersion = '2.6'
         gsonVersion = '2.5'
+        hikariVersion = '2.4.3'
     }
 
     dependencies {
@@ -134,6 +135,7 @@ project(":server") {
         compile "commons-codec:commons-codec:$commonsCodecVersion"
         compile "commons-lang:commons-lang:$commonsLangVersion"
         compile "com.google.code.gson:gson:$gsonVersion"
+        compile "com.zaxxer:HikariCP:$hikariVersion"
     }
 }
 
