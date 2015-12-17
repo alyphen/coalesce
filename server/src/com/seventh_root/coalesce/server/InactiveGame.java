@@ -10,7 +10,6 @@ import static java.util.logging.Level.SEVERE;
 public class InactiveGame {
 
     private CoalesceServer server;
-    private Connection databaseConnection;
 
     private UUID uuid;
     private Player player1;
@@ -18,9 +17,8 @@ public class InactiveGame {
     private Player winner;
     private long timestamp;
 
-    public InactiveGame(CoalesceServer server, Connection databaseConnection, ActiveGame activeGame, Player winner) {
+    public InactiveGame(CoalesceServer server, ActiveGame activeGame, Player winner) {
         this.server = server;
-        this.databaseConnection = databaseConnection;
         this.uuid = UUID.randomUUID();
         this.player1 = activeGame.getPlayer1();
         this.player2 = activeGame.getPlayer2();
@@ -49,6 +47,7 @@ public class InactiveGame {
     }
 
     public void insert() throws SQLException {
+        Connection databaseConnection = server.getDatabaseConnection();
         try (PreparedStatement statement = databaseConnection.prepareStatement("INSERT INTO `game`(`uuid`, `player1_uuid`, `player2_uuid`, `winner_uuid`, `timestamp`) VALUES(?, ?, ?, ?, ?)")) {
             statement.setString(1, getUUID().toString());
             statement.setString(2, getPlayer1().getUUID().toString());
@@ -58,10 +57,13 @@ public class InactiveGame {
             statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to insert game", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 
     public void update() throws SQLException {
+        Connection databaseConnection = server.getDatabaseConnection();
         try (PreparedStatement statement = databaseConnection.prepareStatement("UPDATE `game` SET `player1_uuid` = ?, `player2_uuid` = ?, `winner_uuid` = ?, `timestamp` = ? WHERE `uuid` = ?")) {
             statement.setString(1, getPlayer1().getUUID().toString());
             statement.setString(2, getPlayer2().getUUID().toString());
@@ -71,15 +73,20 @@ public class InactiveGame {
             statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to update game", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 
     public void delete() throws SQLException {
+        Connection databaseConnection = server.getDatabaseConnection();
         try (PreparedStatement statement = databaseConnection.prepareStatement("DELETE FROM `game` WHERE `uuid` = ?")) {
             statement.setString(1, getUUID().toString());
             statement.executeUpdate();
         } catch (SQLException exception) {
             server.getLogger().log(SEVERE, "Failed to delete game", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 

@@ -63,7 +63,7 @@ public class CoalesceServerHandler extends SimpleChannelInboundHandler<String> {
                         server.getLogger().info("Unsuccessful login to " + player.getName() + " from " + ipAddress(ctx.channel()));
                     }
                 } else {
-                    player = new Player(server.getPlayerManager(), server.getDatabaseConnection(), playerName, password);
+                    player = new Player(server.getPlayerManager(), server, playerName, password);
                     ctx.channel().attr(PLAYER_ATTRIBUTE_KEY).set(player);
                     ctx.writeAndFlush("L|" + player.getName() + "|" + (int) Math.round(player.getMMR()) + "\n");
                     server.getLogger().info("Successful sign up as " + player.getName() + " from " + ipAddress(ctx.channel()));

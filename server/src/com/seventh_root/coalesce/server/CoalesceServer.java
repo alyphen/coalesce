@@ -40,7 +40,6 @@ public class CoalesceServer {
 
     private CoalesceServerHandler handler;
     private Config config;
-    private Connection databaseConnection;
     private Logger logger;
     private GameManager gameManager;
     private PlayerManager playerManager;
@@ -48,17 +47,8 @@ public class CoalesceServer {
     public CoalesceServer() {
         logger = Logger.getLogger(getClass().getCanonicalName());
         loadConfig();
-        try {
-            databaseConnection = DriverManager.getConnection(
-                    "jdbc:mysql://" + getConfig().getMap("database").get("url") + "/" + getConfig().getMap("database").get("database"),
-                    (String) getConfig().getMap("database").get("user"),
-                    (String) getConfig().getMap("database").get("password")
-            );
-        } catch (SQLException exception) {
-            getLogger().log(SEVERE, "Failed to connect to database", exception);
-        }
         gameManager = new GameManager(this);
-        playerManager = new PlayerManager(this, getDatabaseConnection());
+        playerManager = new PlayerManager(this);
     }
 
     public Config getConfig() {
@@ -66,7 +56,16 @@ public class CoalesceServer {
     }
 
     public Connection getDatabaseConnection() {
-        return databaseConnection;
+        try {
+            return DriverManager.getConnection(
+                    "jdbc:mysql://" + getConfig().getMap("database").get("url") + "/" + getConfig().getMap("database").get("database"),
+                    (String) getConfig().getMap("database").get("user"),
+                    (String) getConfig().getMap("database").get("password")
+            );
+        } catch (SQLException exception) {
+            getLogger().log(SEVERE, "Failed to connect to database", exception);
+        }
+        return null;
     }
 
     public Logger getLogger() {

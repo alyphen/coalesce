@@ -12,7 +12,7 @@ import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 public class Player {
 
-    private Connection databaseConnection;
+    private CoalesceServer server;
     private PlayerManager playerManager;
 
     private UUID uuid;
@@ -24,9 +24,9 @@ public class Player {
     private double volatility;
     private int numberOfResults;
 
-    public Player(PlayerManager playerManager, Connection databaseConnection, String name, String password) throws SQLException {
+    public Player(PlayerManager playerManager, CoalesceServer server, String name, String password) throws SQLException {
         this.playerManager = playerManager;
-        this.databaseConnection = databaseConnection;
+        this.server = server;
         this.name = name;
         setPassword(password);
         this.mmr = 1500;
@@ -36,9 +36,9 @@ public class Player {
         insert();
     }
 
-    public Player(PlayerManager playerManager, Connection databaseConnection, UUID uuid, String name, String passwordHash, String passwordSalt, double mmr, double ratingDeviation, double volatility, int numberOfResults) {
+    public Player(PlayerManager playerManager, CoalesceServer server, UUID uuid, String name, String passwordHash, String passwordSalt, double mmr, double ratingDeviation, double volatility, int numberOfResults) {
         this.playerManager = playerManager;
-        this.databaseConnection = databaseConnection;
+        this.server = server;
         this.uuid = uuid;
         this.name = name;
         this.passwordHash = passwordHash;
@@ -47,10 +47,6 @@ public class Player {
         this.ratingDeviation = ratingDeviation;
         this.volatility = volatility;
         this.numberOfResults = numberOfResults;
-    }
-
-    public Connection getDatabaseConnection() {
-        return databaseConnection;
     }
 
     public UUID getUUID() {
@@ -119,8 +115,9 @@ public class Player {
     }
 
     public void insert() throws SQLException {
+        Connection databaseConnection = server.getDatabaseConnection();
         try (
-        PreparedStatement statement = getDatabaseConnection().prepareStatement(
+        PreparedStatement statement = databaseConnection.prepareStatement(
                 "INSERT INTO `player`(`uuid`, `name`, `password_hash`, `password_salt`, `mmr`, `rating_deviation`, `volatility`, `number_of_results`) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
         )) {
             setUUID(UUID.randomUUID());
@@ -136,11 +133,14 @@ public class Player {
             playerManager.cachePlayer(this);
         } catch (SQLException exception) {
             playerManager.getServer().getLogger().log(SEVERE, "Failed to insert player", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 
     public void update() throws SQLException {
-        try (PreparedStatement statement = getDatabaseConnection().prepareStatement(
+        Connection databaseConnection = server.getDatabaseConnection();
+        try (PreparedStatement statement = databaseConnection.prepareStatement(
                 "UPDATE `player` SET `name` = ?, `password_hash` = ?, `password_salt` = ?, `mmr` = ?, `rating_deviation` = ?, `volatility` = ?, `number_of_results` = ? WHERE `uuid` = ?"
         )) {
             statement.setString(1, getName());
@@ -154,11 +154,14 @@ public class Player {
             statement.executeUpdate();
         } catch (SQLException exception) {
             playerManager.getServer().getLogger().log(SEVERE, "Failed to update player", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 
     public void delete() throws SQLException {
-        try (PreparedStatement statement = getDatabaseConnection().prepareStatement(
+        Connection databaseConnection = server.getDatabaseConnection();
+        try (PreparedStatement statement = databaseConnection.prepareStatement(
                 "DELETE FROM `player` WHERE `uuid` = ?"
         )) {
             statement.setString(1, getUUID().toString());
@@ -166,6 +169,8 @@ public class Player {
             playerManager.uncachePlayer(this);
         } catch (SQLException exception) {
             playerManager.getServer().getLogger().log(SEVERE, "Failed to delete player", exception);
+        } finally {
+            databaseConnection.close();
         }
     }
 

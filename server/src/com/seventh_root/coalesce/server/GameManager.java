@@ -39,7 +39,7 @@ public class GameManager {
         activeGames.remove(game.getPlayer1().getUUID().toString());
         activeGames.remove(game.getPlayer2().getUUID().toString());
         adjustMMR(game, winner);
-        InactiveGame inactiveGame = new InactiveGame(server, server.getDatabaseConnection(), game, winner);
+        InactiveGame inactiveGame = new InactiveGame(server, game, winner);
         try {
             inactiveGame.insert();
         } catch (SQLException exception) {
