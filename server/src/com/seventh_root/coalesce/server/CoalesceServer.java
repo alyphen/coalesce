@@ -1,7 +1,5 @@
 package com.seventh_root.coalesce.server;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -17,6 +15,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class CoalesceServer {
 
     private CoalesceServerHandler handler;
     private Config config;
-    private HikariDataSource hikariDataSource;
+    private Connection databaseConnection;
     private Logger logger;
     private GameManager gameManager;
     private PlayerManager playerManager;
@@ -49,11 +48,15 @@ public class CoalesceServer {
     public CoalesceServer() {
         logger = Logger.getLogger(getClass().getCanonicalName());
         loadConfig();
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mysql://" + getConfig().getMap("database").get("url") + "/" + getConfig().getMap("database").get("database"));
-        hikariConfig.setUsername((String) getConfig().getMap("database").get("user"));
-        hikariConfig.setPassword((String) getConfig().getMap("database").get("password"));
-        hikariDataSource = new HikariDataSource(hikariConfig);
+        try {
+            databaseConnection = DriverManager.getConnection(
+                    "jdbc:mysql://" + getConfig().getMap("database").get("url") + "/" + getConfig().getMap("database").get("database"),
+                    (String) getConfig().getMap("database").get("user"),
+                    (String) getConfig().getMap("database").get("password")
+            );
+        } catch (SQLException exception) {
+            getLogger().log(SEVERE, "Failed to connect to database", exception);
+        }
         gameManager = new GameManager(this);
         playerManager = new PlayerManager(this, getDatabaseConnection());
     }
@@ -63,12 +66,7 @@ public class CoalesceServer {
     }
 
     public Connection getDatabaseConnection() {
-        try {
-            return hikariDataSource.getConnection();
-        } catch (SQLException exception) {
-            getLogger().log(SEVERE, "Failed to get database connection from pool", exception);
-        }
-        return null;
+        return databaseConnection;
     }
 
     public Logger getLogger() {
